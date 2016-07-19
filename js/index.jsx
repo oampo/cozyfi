@@ -15,6 +15,14 @@ import update from 'react-addons-update';
 import AppBar from 'material-ui/AppBar';
 import TextField from 'material-ui/TextField';
 import CozyFiMap from './cozyfimap.jsx';
+import RaisedButton from 'material-ui/RaisedButton';
+import {Popover, PopoverAnimationVertical} from 'material-ui/Popover';
+import Menu from 'material-ui/Menu';
+import MenuItem from 'material-ui/MenuItem';
+
+
+
+
 
 const NavBar = () => (
   <AppBar
@@ -31,6 +39,58 @@ const NavBar = () => (
 );
 
 
+
+// export default class Popover extends React.Component {
+//
+//   constructor(props) {
+//     super(props);
+//
+//     this.state = {
+//       open: false,
+//     };
+//   }
+//
+//   handleTouchTap = (event) => {
+//     // This prevents ghost click.
+//     event.preventDefault();
+//     this.setState({
+//       open: true,
+//       anchorEl: event.currentTarget,
+//     });
+//   };
+//
+  // handleRequestClose = () => {
+  //   this.setState({
+  //     open: false,
+  //   });
+  // };
+//
+//   render() {
+//     return (
+//       <div>
+//         <RaisedButton
+//           onTouchTap={this.handleTouchTap}
+//           label="Click me"
+//         />
+//         <Popover
+//           open={this.state.open}
+//           anchorEl={this.state.anchorEl}
+//           anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
+//           targetOrigin={{horizontal: 'left', vertical: 'top'}}
+//           onRequestClose={this.handleRequestClose}
+//           animation={PopoverAnimationVertical}
+//         >
+//           <Menu>
+//             <MenuItem primaryText="Refresh" />
+//             <MenuItem primaryText="Help &amp; feedback" />
+//             <MenuItem primaryText="Settings" />
+//             <MenuItem primaryText="Sign out" />
+//           </Menu>
+//         </Popover>
+//       </div>
+//     );
+//   }
+// }
 
 const SinglePage = () => (
 
@@ -114,6 +174,8 @@ export default class Cardz extends React.Component {
           submitter: 'gwhitley',
           featured: true,
           expanded: false,
+          anchorEl: event.currentTarget,
+
         },
         {
           img: 'https://c2.staticflickr.com/6/5349/17374712440_ae198715ea_z.jpg',
@@ -129,6 +191,8 @@ export default class Cardz extends React.Component {
                     zip: 27707},
           submitter: 'gwhitley',
           expanded: false,
+          anchorEl: event.currentTarget,
+
 
         },
         {
@@ -145,6 +209,8 @@ export default class Cardz extends React.Component {
                     zip: 27606},
           submitter: 'gwhitley',
           expanded: false,
+          anchorEl: event.currentTarget,
+
 
         },
         {
@@ -161,6 +227,8 @@ export default class Cardz extends React.Component {
                     zip: 27606},
           submitter: 'gwhitley',
           expanded: false,
+          anchorEl: event.currentTarget,
+
 
         },
       ]
@@ -176,7 +244,7 @@ export default class Cardz extends React.Component {
 // TODO:log state log this.state
 
   handleToggle(toggle, index, event) {
-    var newState = update(this.state, {tilesData: {[index]: {expanded: {$set: toggle}}}})
+    var newState = update(this.state, {tilesData: {[index]: {expanded: {$set: true}}}})
     // this.update(this.state.tilesData[0].expanded, {$set: true});
     console.log(index)
 
@@ -185,57 +253,52 @@ export default class Cardz extends React.Component {
   };
 
 // update(state1, {$push: ['y']})
-
-  handleExpand() {
-    // var newState = update(this.state, {tilesData: {0: {expanded: {$set: true}}})
-    // // this.update(this.state.tilesData[0].expanded, {$set: true});
-    // this.setState(newState);
-
+  handleTouchTap(event){
+    // This prevents ghost click.
+    event.preventDefault();
+    this.setState({
+      expanded: true,
+      anchorEl: event.currentTarget,
+    });
   };
 
-  handleReduce() {
-    // var newState = update(this.state, {tilesData: {0: {expanded: {$set: false}}}})
-    // // this.update(this.state.tilesData[0].expanded, {$set: true});
-    // this.setState(newState);
+  handleRequestClose(toggle, index, event){
+    var newState = update(this.state, {tilesData: {[index]: {expanded: {$set: false}}}})
 
-        // this.setState({expanded: false});
+    this.setState(newState);
+
   };
-
 
   render() {
     return (
       <div>
       {this.state.tilesData.map((tile, index) => (
+        <div>
       <Card
-        onClick={this.handleToggle.bind(this, !tile.expanded, index)}
-        expanded={tile.expanded}
-        onExpandChange={this.handleExpandChange}>
+        onTouchTap={this.handleTouchTap.bind(this, !tile.expanded, index)}
+        onClick={this.handleToggle.bind(this, !tile.expanded, index)}>
         <CardHeader
           title={tile.title}
           subtitle={tile.subtitle}
           avatar={tile.avatar}
-          actAsExpander={true}
-          showExpandableButton={true}
         />
-        <CardText>
-        </CardText>
-        <CardMedia
-          inlineStyle={styles.cardz}
-          expandable={true}
-          overlay={<CardTitle title="Overlay title" subtitle="Overlay subtitle" />}
-        >
-          <img src={tile.img} />
-        </CardMedia>
-        <CardTitle title="Card title" subtitle="Card subtitle" expandable={true} />
-        <CardText expandable={true}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-          Donec mattis pretium massa. Aliquam erat volutpat. Nulla facilisi.
-          Donec vulputate interdum sollicitudin. Nunc lacinia auctor quam sed pellentesque.
-          Aliquam dui mauris, mattis quis lacus id, pellentesque lobortis odio.
-        </CardText>
-        <CardActions>
-        </CardActions>
       </Card>
+      <Popover
+        open={tile.expanded}
+        anchorEl={tile.anchorEl}
+        anchorOrigin={{horizontal: 'right', vertical: 'middle'}}
+        targetOrigin={{horizontal: 'right', vertical: 'bottom'}}
+        onRequestClose={tile.handleRequestClose}
+        animation={PopoverAnimationVertical}
+      >
+        <Menu>
+          <MenuItem primaryText={tile.title} />
+          <MenuItem primaryText="Help &amp; feedback" />
+          <MenuItem primaryText="Settings" />
+          <MenuItem primaryText="Sign out" />
+        </Menu>
+      </Popover>
+      </div>
     ))}
 
 
@@ -252,6 +315,7 @@ const App = () => (
       <SinglePage />
   </MuiThemeProvider>
 );
+
 
 
 document.addEventListener('DOMContentLoaded', function() {
